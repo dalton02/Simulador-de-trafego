@@ -1,11 +1,10 @@
-#include "../include/concurrency/clock.hpp"
-#include "../include/core/Grid.h"
+#include "../include/concurrency/synchronization.hpp"
 
 #include <cstdio>
+#include <iostream>
 
 int main() {
-
-  Clock clock;
-
+  Synchronization *sync = new Synchronization();
+  sync->mainLoop();
   return 0;
 }
