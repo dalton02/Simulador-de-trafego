@@ -1,4 +1,6 @@
 #include "../../include/utils/utils.hpp"
+#include <iostream>
+#include <sstream>
 
 bool isColliding(Object obj1, Object obj2) {
   if (obj1.x + obj1.width <= obj2.x)
@@ -27,4 +29,24 @@ bool isCloseToBy(int x, int y, Object obj1, Object obj2) {
   bool close_y = (diff_y >= -y && diff_y <= y);
 
   return close_x && close_y;
+}
+
+Object createCollisionObj(Object reference, int afterX, int afterY, int width,
+                          int height) {
+
+  Object toReturn = {reference.x, reference.y, width, height};
+  toReturn.x += afterX;
+  toReturn.y += afterY;
+  return toReturn;
+}
+
+void printObject(Object obj) {
+  std::stringstream ss;
+  ss << "{\n";
+  ss << "  \"x\": " << obj.x << ",\n";
+  ss << "  \"y\": " << obj.y << ",\n";
+  ss << "  \"width\": " << obj.width << ",\n";
+  ss << "  \"height\": " << obj.height << "\n";
+  ss << "}";
+  std::cout << ss.str() << "\n";
 }

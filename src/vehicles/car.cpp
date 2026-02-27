@@ -1,16 +1,15 @@
 #include "../../include/vehicles/car.hpp"
 #include "../../include/utils/utils.hpp"
-
 #include <condition_variable>
 #include <deque>
 #include <iostream>
 #include <mutex>
-#include <thread>
 
 std::deque<Car> globalCars;
-Car ::Car(Object *obj, int speed, TrafficLight *traffic) {
+Car ::Car(Object *obj, int speedX, int speedY, TrafficLight *traffic) {
   this->car = obj;
-  this->speed = speed;
+  this->speedX = speedX;
+  this->speedY = speedY;
   this->currentTrafficLight = traffic;
   canProcess = false;
 };
@@ -24,7 +23,7 @@ void Car::standby(std::condition_variable &ready_variable,
 
     ready_variable.wait(lock, [this]() {
       if (inFrontOfRedLight()) {
-        std::cout << "CARRO DE FRENTE A SINA VERMELHO\n";
+        std::cout << "CARRO DE FRENTE A SINAL VERMELHO\n";
       }
       if (hasCarInFront()) {
         std::cout << "CARRO DE FRENTE A OUTRO\n";
@@ -50,9 +49,19 @@ void Car::run() {
 
 bool Car::inFrontOfRedLight() {
   int limit = 10;
+
+  if (speedX > 0) {
+    Object collisionX =
+        createCollisionObj(*car, car->width, 0, limit, car->height);
+
+    return !currentTrafficLight->green &&
+           isColliding(collisionX, *currentTrafficLight->obj);
+  }
+
+  Object collisionY =
+      createCollisionObj(*car, 0, car->height, car->width, limit);
   return !currentTrafficLight->green &&
-         isCloseToBy(limit, limit, *currentTrafficLight->obj,
-                     *currentTrafficLight->obj);
+         isColliding(collisionY, *currentTrafficLight->obj);
 }
 bool Car::hasCarInFront() {
   for (Car &otherCar : globalCars) {

@@ -26,15 +26,15 @@ void Synchronization::mainLoop() {
 
   const auto tick_duration = std::chrono::milliseconds(400);
 
-  Object *light1 = new Object{25, 0, 10, 10};
+  Object *light1 = new Object{25, 0, 5, 10};
 
-  Object *car1 = new Object{0, 0, 10, 10};
+  Object *car1 = new Object{6, 0, 10, 10};
   Object *car2 = new Object{35, 0, 10, 10};
 
   TrafficLight &trafficLight1 = globalLights.emplace_back(light1, 4);
 
-  globalCars.emplace_back(car1, 2, &trafficLight1);
-  globalCars.emplace_back(car2, 2, &trafficLight1);
+  globalCars.emplace_back(car1, 2, 0, &trafficLight1);
+  //  globalCars.emplace_back(car2, 2, &trafficLight1);
 
   for (Car &car : globalCars) {
     car.thr =
@@ -48,9 +48,11 @@ void Synchronization::mainLoop() {
   }
 
   while (true) {
+
     for (Car &car : globalCars) {
       car.canProcess = true;
     }
+
     for (TrafficLight &traffic : globalLights) {
       traffic.process(clockMutex, clockCondition);
     }
