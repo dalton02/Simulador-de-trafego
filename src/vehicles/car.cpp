@@ -44,34 +44,41 @@ void Car::run() {
   int limit = 10;
   int carSize = 5;
   std::cout << "  CARRO ANDANDO, X:" << car->x << "\n";
-  this->car->x++;
+  this->car->x += speedX;
 }
 
 bool Car::inFrontOfRedLight() {
-  int limit = 10;
+  int limit = 5;
 
   if (speedX > 0) {
     Object collisionX =
-        createCollisionObj(*car, car->width, 0, limit, car->height);
+        createCollisionObj(*car, car->width, 0, limit + speedX, car->height);
 
     return !currentTrafficLight->green &&
            isColliding(collisionX, *currentTrafficLight->obj);
   }
 
   Object collisionY =
-      createCollisionObj(*car, 0, car->height, car->width, limit);
+      createCollisionObj(*car, 0, car->height, car->width, limit + speedY);
   return !currentTrafficLight->green &&
          isColliding(collisionY, *currentTrafficLight->obj);
 }
 bool Car::hasCarInFront() {
+  int limit = 1;
   for (Car &otherCar : globalCars) {
     if (&otherCar == this) {
       continue;
     }
-    if (isCloseToBy(10, 10, *otherCar.car, *this->car)) {
-      std::cout << "Parado atras de outro carro...\n";
-      return true;
+    if (speedX > 0) {
+      Object collisionX =
+          createCollisionObj(*car, car->width, 0, limit + speedX, car->height);
+
+      return isColliding(collisionX, *otherCar.car);
     }
+
+    Object collisionY =
+        createCollisionObj(*car, 0, car->height, car->width, limit + speedY);
+    return isColliding(collisionY, *otherCar.car);
   }
   return false;
 }

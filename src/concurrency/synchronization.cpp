@@ -1,11 +1,13 @@
 #include "../../include/concurrency/synchronization.hpp"
 #include "../../include/utils/utils.hpp"
 #include "../../include/vehicles/car.hpp"
+#include <SFML/Graphics.hpp>
 
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Window/VideoMode.hpp>
 #include <cmath>
 #include <condition_variable>
 #include <deque>
-#include <iostream>
 #include <mutex>
 #include <thread>
 
@@ -17,6 +19,8 @@ Synchronization::Synchronization() {
 
 void Synchronization::mainLoop() {
 
+  sf::RenderWindow window(sf::VideoMode({800, 600}), "Retangulos Simples");
+
   std::mutex clockMutex;
   std::condition_variable clockCondition;
 
@@ -24,17 +28,17 @@ void Synchronization::mainLoop() {
   int workersProcessed = 0;
   bool canProcess = false;
 
-  const auto tick_duration = std::chrono::milliseconds(400);
+  const auto tick_duration = std::chrono::milliseconds(100);
 
-  Object *light1 = new Object{25, 0, 5, 10};
+  Object *light1 = new Object{65, 30, 5, 10};
 
-  Object *car1 = new Object{6, 0, 10, 10};
-  Object *car2 = new Object{35, 0, 10, 10};
+  Object *car1 = new Object{0, 30, 10, 10};
+  Object *car2 = new Object{11, 30, 10, 10};
 
   TrafficLight &trafficLight1 = globalLights.emplace_back(light1, 4);
 
-  globalCars.emplace_back(car1, 2, 0, &trafficLight1);
-  //  globalCars.emplace_back(car2, 2, &trafficLight1);
+  globalCars.emplace_back(car1, 10, 0, &trafficLight1);
+  globalCars.emplace_back(car2, 6, 0, &trafficLight1);
 
   for (Car &car : globalCars) {
     car.thr =
@@ -48,6 +52,49 @@ void Synchronization::mainLoop() {
   }
 
   while (true) {
+
+    while (const std::optional event = window.pollEvent()) {
+      if (event->is<sf::Event::Closed>()) {
+        window.close();
+      }
+    }
+
+    window.clear(sf::Color::Black);
+
+    for (Car &car : globalCars) {
+      sf::RectangleShape rect(sf::Vector2f(car.car->width, car.car->height));
+
+      float pixelX = car.car->x * 1.f; // cada tile tem 32 pixels
+      float pixelY = car.car->y * 1.f;
+
+      rect.setPosition({pixelX, pixelY});
+      rect.setFillColor(sf::Color::Green);
+      rect.setOutlineColor(sf::Color::White);
+
+      window.draw(rect);
+    }
+
+    for (TrafficLight &light : globalLights) {
+      sf::RectangleShape rect(
+          sf::Vector2f(light.obj->width, light.obj->height));
+
+      float pixelX = light.obj->x * 1.f; // cada tile tem 32 pixels
+      float pixelY = light.obj->y * 1.f;
+
+      sf::Color color = sf::Color::Red;
+      if (light.green) {
+        color = sf::Color::Green;
+      }
+
+      rect.setPosition({pixelX, pixelY});
+      rect.setFillColor(color);
+      rect.setOutlineColor(sf::Color::White);
+      rect.setOutlineThickness(2);
+
+      window.draw(rect);
+    }
+
+    window.display();
 
     for (Car &car : globalCars) {
       car.canProcess = true;

@@ -7,7 +7,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                " g++ -std=c++20  $(find . -type f -name '*.cpp') -o programa"
+                " g++ -std=c++20  $(find . -type f -name '*.cpp') -lsfml-system -lsfml-window -lsfml-graphics -o programa"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
