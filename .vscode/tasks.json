@@ -7,7 +7,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "g++ -std=c++17 -g $(find ${workspaceFolder} -name \"*.cpp\") -o ${workspaceFolder}/main  && ${workspaceFolder}/main"
+                " g++ -std=c++20  $(find . -type f -name '*.cpp') -o programa"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

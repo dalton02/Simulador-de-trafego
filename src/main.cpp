@@ -1,9 +1,10 @@
-#include "../include/core/Grid.h"
+#include "../include/concurrency/synchronization.hpp"
+
 #include <cstdio>
+#include <iostream>
 
 int main() {
-
-  x();
-
+  Synchronization *sync = new Synchronization();
+  sync->mainLoop();
   return 0;
 }
