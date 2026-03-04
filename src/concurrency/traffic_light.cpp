@@ -11,9 +11,10 @@ using namespace std;
 
 std::deque<TrafficLight> globalLights;
 
-TrafficLight ::TrafficLight(Object *obj, int ticksForToggle) {
+TrafficLight ::TrafficLight(Object *obj, int direction, int ticksForToggle) {
   this->obj = obj;
   this->green = true;
+  this->direction = direction;
   this->ticksForToggle = ticksForToggle;
 }
 
@@ -24,7 +25,6 @@ void TrafficLight ::process(mutex &mu, condition_variable &cv) {
   ++ticks;
 
   if (ticks % ticksForToggle == 0) {
-    cout << "\nTOGGLING LIGHT\n";
     unique_lock<mutex> lock(mu);
     toggle();
   }

@@ -18,6 +18,7 @@ public:
   Object *car;
   int speedX;
   int speedY;
+  bool isAmbulance;
   std::thread thr;
   TrafficLight *currentTrafficLight;
   bool canProcess;
@@ -29,7 +30,8 @@ public:
   bool inFrontOfRedLight();
   bool hasCarInFront();
 
-  Car(Object *object, int speedX, int speedY, TrafficLight *traffic);
+  Car(Object *object, int speedX, int speedY, TrafficLight *traffic,
+      bool isAmbulance);
 
   Car(const Car &) = delete;
   Car &operator=(const Car &) = delete;

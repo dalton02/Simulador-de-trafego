@@ -6,7 +6,9 @@
 #include <mutex>
 
 std::deque<Car> globalCars;
-Car ::Car(Object *obj, int speedX, int speedY, TrafficLight *traffic) {
+
+Car ::Car(Object *obj, int speedX, int speedY, TrafficLight *traffic,
+          bool isAmbulance) {
   this->car = obj;
   this->speedX = speedX;
   this->speedY = speedY;
@@ -22,13 +24,6 @@ void Car::standby(std::condition_variable &ready_variable,
     std::unique_lock<std::mutex> lock(ready_mutex);
 
     ready_variable.wait(lock, [this]() {
-      if (inFrontOfRedLight()) {
-        std::cout << "CARRO DE FRENTE A SINAL VERMELHO\n";
-      }
-      if (hasCarInFront()) {
-        std::cout << "CARRO DE FRENTE A OUTRO\n";
-      }
-
       return !inFrontOfRedLight() && !hasCarInFront() && canProcess;
     });
 
@@ -43,12 +38,46 @@ void Car::standby(std::condition_variable &ready_variable,
 void Car::run() {
   int limit = 10;
   int carSize = 5;
-  std::cout << "  CARRO ANDANDO, X:" << car->x << "\n";
   this->car->x += speedX;
+
+  int direction = 0;
+  if (speedY > 0) {
+    direction = 1;
+  }
+
+  if (car->x > currentTrafficLight->obj->x) {
+
+    TrafficLight *nearestTrafficLight = nullptr;
+    float minDistance = std::numeric_limits<float>::max();
+
+    for (TrafficLight &traffic : globalLights) {
+      if (&traffic == this->currentTrafficLight ||
+          traffic.direction != direction) {
+        continue;
+      }
+
+      if (traffic.obj->x > car->x) {
+        float distance = traffic.obj->x - car->x;
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearestTrafficLight = &traffic;
+        }
+      }
+    }
+
+    if (nearestTrafficLight != nullptr) {
+      std::cout << "  TROCANDO DE SINAL" << "\n";
+      this->currentTrafficLight = nearestTrafficLight;
+    }
+  }
 }
 
 bool Car::inFrontOfRedLight() {
   int limit = 5;
+
+  if (currentTrafficLight == nullptr) {
+    return false;
+  }
 
   if (speedX > 0) {
     Object collisionX =

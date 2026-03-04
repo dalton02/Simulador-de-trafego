@@ -28,17 +28,19 @@ void Synchronization::mainLoop() {
   int workersProcessed = 0;
   bool canProcess = false;
 
-  const auto tick_duration = std::chrono::milliseconds(100);
+  const auto tick_duration = std::chrono::milliseconds(300);
 
   Object *light1 = new Object{65, 30, 5, 10};
+  Object *light2 = new Object{125, 30, 5, 10};
 
   Object *car1 = new Object{0, 30, 10, 10};
   Object *car2 = new Object{11, 30, 10, 10};
 
-  TrafficLight &trafficLight1 = globalLights.emplace_back(light1, 4);
+  TrafficLight &trafficLight1 = globalLights.emplace_back(light1, 0, 4);
+  globalLights.emplace_back(light2, 0, 4);
 
-  globalCars.emplace_back(car1, 10, 0, &trafficLight1);
-  globalCars.emplace_back(car2, 6, 0, &trafficLight1);
+  globalCars.emplace_back(car1, 10, 0, &trafficLight1, false);
+  globalCars.emplace_back(car2, 6, 0, &trafficLight1, false);
 
   for (Car &car : globalCars) {
     car.thr =
@@ -64,7 +66,7 @@ void Synchronization::mainLoop() {
     for (Car &car : globalCars) {
       sf::RectangleShape rect(sf::Vector2f(car.car->width, car.car->height));
 
-      float pixelX = car.car->x * 1.f; // cada tile tem 32 pixels
+      float pixelX = car.car->x * 1.f;
       float pixelY = car.car->y * 1.f;
 
       rect.setPosition({pixelX, pixelY});
@@ -78,7 +80,7 @@ void Synchronization::mainLoop() {
       sf::RectangleShape rect(
           sf::Vector2f(light.obj->width, light.obj->height));
 
-      float pixelX = light.obj->x * 1.f; // cada tile tem 32 pixels
+      float pixelX = light.obj->x * 1.f;
       float pixelY = light.obj->y * 1.f;
 
       sf::Color color = sf::Color::Red;

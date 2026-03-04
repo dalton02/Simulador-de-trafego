@@ -16,10 +16,11 @@ private:
 
 public:
   bool green;
+  int direction;
   Object *obj;
   std::condition_variable cv;
   std::mutex mu;
-  TrafficLight(Object *obj, int ticksForToggle);
+  TrafficLight(Object *obj, int direction, int ticksForToggle);
   ~TrafficLight();
 
   void process(std::mutex &, std::condition_variable &);
