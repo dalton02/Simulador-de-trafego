@@ -1,30 +1,30 @@
-#ifndef CLOCK_HPP
-#define CLOCK_HPP
+#pragma once
 #include "../utils/utils.hpp"
-
-#include <condition_variable>
-#include <deque>
+#include "../concurrency/synchronization.hpp" // Precisa conhecer o Relógio Global!
+#include <thread>
 #include <mutex>
-#include <semaphore>
 
 class TrafficLight {
-
 private:
-  int ticksForToggle;
-  int ticks;
-  void toggle();
+    int ticksForToggle;
+    int tickCounter;
+    bool isRunning;
 
 public:
-  bool green;
-  Object *obj;
-  std::condition_variable cv;
-  std::mutex mu;
-  TrafficLight(Object *obj, int ticksForToggle);
-  ~TrafficLight();
+    TrafficLightData* data; // Ponteiro para a struct global que a interface lê
+    std::thread thr;
 
-  void process(std::mutex &, std::condition_variable &);
+    // Construtor atualizado
+    TrafficLight(TrafficLightData* data, int ticksForToggle);
+    ~TrafficLight();
+
+    // Impede cópia na memória (segurança para threads)
+    TrafficLight(const TrafficLight&) = delete;
+    TrafficLight& operator=(const TrafficLight&) = delete;
+
+    // O loop que roda na thread
+    void threadLoop();
+    
+    // Função para inverter a cor
+    void toggle();
 };
-
-extern std::deque<TrafficLight> globalLights;
-
-#endif

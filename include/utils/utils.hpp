@@ -1,21 +1,29 @@
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
+#include <vector>
+#include <mutex>
 
-typedef struct {
-  int x;
-  int y;
-  int width;
-  int height;
-} Object;
+struct Object {
+    float x;
+    float y;
+};
 
-bool isColliding(Object obj1, Object obj2);
+struct TrafficLightData {
+    Object* obj;
+    bool green;
+    int gridR; // Linha do cruzamento
+    int gridC; // Coluna do cruzamento
+    int dir;
+};
 
-/// Retorna se um objeto está proximo do outro  por x metros ou y metros
-bool isCloseToBy(int x, int y, Object obj1, Object obj2);
+struct CarData {
+    Object* obj;
+    float speedX;
+    float speedY;
+    int spriteId; // De 0 a 5
+    int dir;      // 0 = Direita, 1 = Baixo
+};
 
-Object createCollisionObj(Object reference, int afterX, int afterY, int width,
-                          int height);
-
-void printObject(Object obj);
-
-#endif
+extern std::vector<TrafficLightData> globalLights;
+extern std::vector<CarData> globalCars;
+extern std::mutex carsMutex;
+extern std::mutex lightsMutex;

@@ -1,38 +1,41 @@
-
-
-#include <condition_variable>
-#include <deque>
-#include <mutex>
+#pragma once
 #include <thread>
+#include <mutex>
+#include <condition_variable>
 
 #include "../utils/utils.hpp"
-
+#include "../core/Grid.hpp"
 #include "../concurrency/traffic_light.hpp"
 
-class Car {
-
-private:
-  std::mutex mu;
-
-public:
-  Object *car;
-  int speedX;
-  int speedY;
-  std::thread thr;
-  TrafficLight *currentTrafficLight;
-  bool canProcess;
-
-  void waitGreenLight();
-  void run();
-  void standby(std::condition_variable &, std::mutex &, int &);
-  void moveToTrafficLight(TrafficLight *);
-  bool inFrontOfRedLight();
-  bool hasCarInFront();
-
-  Car(Object *object, int speedX, int speedY, TrafficLight *traffic);
-
-  Car(const Car &) = delete;
-  Car &operator=(const Car &) = delete;
+enum class CarSpeed { 
+    FAST = 1,   
+    MEDIUM = 2, 
+    SLOW = 4    
 };
 
-extern std::deque<Car> globalCars;
+class Car {
+private:
+    CarSpeed speed;
+    int tickCounter;
+    bool isRunning;
+    int gridR;
+    int gridC;
+    Direction currentDir;
+
+public:
+    CarData* data;
+    std::thread thr;
+    bool isActive;
+
+    Car(CarData* data);
+    ~Car();
+
+    Car(const Car&) = delete;
+    Car& operator=(const Car&) = delete;
+
+    // Atualizado com spriteId
+    void spawn(int startR, int startC, Direction dir, CarSpeed spd, int spriteId);
+
+    void threadLoop(Grid& grid, std::condition_variable& globalClockCV, std::mutex& clockMutex, int& currentTick);
+    void tryMove(Grid& grid);
+};

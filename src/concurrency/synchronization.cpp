@@ -1,64 +1,43 @@
 #include "../../include/concurrency/synchronization.hpp"
-#include "../../include/utils/utils.hpp"
-#include "../../include/vehicles/car.hpp"
+#include <chrono>
 
-#include <cmath>
-#include <condition_variable>
-#include <deque>
-#include <iostream>
-#include <mutex>
-#include <thread>
+namespace GlobalClock {
+    // Inicialização das variáveis globais
+    std::condition_variable cv;
+    std::mutex mtx;
+    int currentTick = 0;
+    bool isRunning = false;
+    std::thread clockThread;
 
-using namespace std;
-
-Synchronization::Synchronization() {
-  Object *obj = new Object{100, 50, 40, 40};
-}
-
-void Synchronization::mainLoop() {
-
-  std::mutex clockMutex;
-  std::condition_variable clockCondition;
-
-  int ticks = 0;
-  int workersProcessed = 0;
-  bool canProcess = false;
-
-  const auto tick_duration = std::chrono::milliseconds(400);
-
-  Object *light1 = new Object{25, 0, 5, 10};
-
-  Object *car1 = new Object{6, 0, 10, 10};
-  Object *car2 = new Object{35, 0, 10, 10};
-
-  TrafficLight &trafficLight1 = globalLights.emplace_back(light1, 4);
-
-  globalCars.emplace_back(car1, 2, 0, &trafficLight1);
-  //  globalCars.emplace_back(car2, 2, &trafficLight1);
-
-  for (Car &car : globalCars) {
-    car.thr =
-        std::thread([&car, &clockCondition, &clockMutex, &workersProcessed]() {
-          car.standby(clockCondition, clockMutex, workersProcessed);
+    void start(int tickDurationMs) {
+        isRunning = true;
+        
+        // Cria a thread do relógio
+        clockThread = std::thread([tickDurationMs]() {
+            while (isRunning) {
+                // 1. O relógio dorme pelo tempo de 1 Tick (ex: 100ms)
+                std::this_thread::sleep_for(std::chrono::milliseconds(tickDurationMs));
+                
+                // 2. Trava o mutex rapidinho só para atualizar o número do tick
+                {
+                    std::lock_guard<std::mutex> lock(mtx);
+                    currentTick++;
+                }
+                
+                // 3. O MAESTRO GRITA: Acorda TODAS as threads que estão esperando!
+                cv.notify_all(); 
+            }
         });
-  }
-
-  for (Car &car : globalCars) {
-    car.thr.detach();
-  }
-
-  while (true) {
-
-    for (Car &car : globalCars) {
-      car.canProcess = true;
     }
 
-    for (TrafficLight &traffic : globalLights) {
-      traffic.process(clockMutex, clockCondition);
+    void stop() {
+        isRunning = false;
+        // Dá um último grito para garantir que ninguém fique preso dormindo quando o programa fechar
+        cv.notify_all(); 
+        
+        // Espera a thread do relógio terminar de forma segura
+        if (clockThread.joinable()) {
+            clockThread.join();
+        }
     }
-
-    clockCondition.notify_all();
-
-    std::this_thread::sleep_for(tick_duration);
-  }
 }
