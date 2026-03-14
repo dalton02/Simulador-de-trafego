@@ -16,6 +16,39 @@ TrafficLight ::TrafficLight(Object obj, int direction, int ticksForToggle,
 
 TrafficLight ::~TrafficLight() {}
 
+void TrafficLight ::process(mutex &mu, condition_variable &cv, bool ambulance) {
+
+  if (keepClosed) {
+    if (green) {
+      unique_lock<mutex> lock(mu);
+      toggle();
+    }
+    ticks = 0;
+    return;
+  }
+
+  if (ambulance) {
+    if (!green) {
+      unique_lock<mutex> lock(mu);
+      toggle();
+    }
+    ticks = 0;
+    return;
+  }
+
+  int compensation = 0;
+  if (!green) {
+    compensation = 10;
+  }
+  ++ticks;
+
+  if (ticks >= ticksForToggle + compensation) {
+    unique_lock<mutex> lock(mu);
+    toggle();
+    ticks = 0;
+  }
+}
+
 void TrafficLight ::toggle() { 
   green = !green; 
 }
