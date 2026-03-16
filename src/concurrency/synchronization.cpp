@@ -1,13 +1,16 @@
-#include "../../include/concurrency/synchronization.hpp"
-#include "../../include/utils/utils.hpp"
-#include "../../include/vehicles/car.hpp"
+#include "../../include/core/synchronization.hpp"
+#include "../../include/core/car.hpp"
+#include "../../include/core/grid.hpp"
+#include "../../include/ui/graphics.hpp"
 
-#include <cmath>
-#include <condition_variable>
-#include <deque>
+#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Window/VideoMode.hpp>
+
+#include <cstddef>
 #include <iostream>
-#include <mutex>
-#include <thread>
+#include <memory>
+#include <vector>
 
 using namespace std;
 
@@ -22,9 +25,8 @@ void Synchronization::mainLoop() {
 
   int ticks = 0;
   int workersProcessed = 0;
-  bool canProcess = false;
 
-  const auto tick_duration = std::chrono::milliseconds(400);
+  const auto tick_duration = std::chrono::milliseconds(40);
 
   Object *light1 = new Object{25, 0, 5, 10};
 
@@ -36,20 +38,20 @@ void Synchronization::mainLoop() {
   globalCars.emplace_back(car1, 2, 0, &trafficLight1);
   //  globalCars.emplace_back(car2, 2, &trafficLight1);
 
-  for (Car &car : globalCars) {
-    car.thr =
+  for (const auto &car : globalCars) {
+    car->thr =
         std::thread([&car, &clockCondition, &clockMutex, &workersProcessed]() {
-          car.standby(clockCondition, clockMutex, workersProcessed);
+          car->standby(clockCondition, clockMutex, workersProcessed);
         });
   }
 
-  for (Car &car : globalCars) {
+  for (const auto &car : globalCars) {
     car.thr.detach();
   }
 
   while (true) {
 
-    for (Car &car : globalCars) {
+    for (const auto &car : globalCars) {
       car.canProcess = true;
     }
 
