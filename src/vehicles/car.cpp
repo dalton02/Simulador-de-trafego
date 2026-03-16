@@ -6,13 +6,15 @@
 #include <mutex>
 
 std::deque<Car> globalCars;
-Car ::Car(Object *obj, int speedX, int speedY, TrafficLight *traffic) {
+Car::Car(Object obj, int speedX, int speedY, bool isAmbulance) {
   this->car = obj;
   this->speedX = speedX;
   this->speedY = speedY;
-  this->currentTrafficLight = traffic;
+  this->isAmbulance = isAmbulance;
+  this->currentTrafficLight = findNearestLight();
   canProcess = false;
-};
+  active = true;
+}
 
 void Car::standby(std::condition_variable &ready_variable,
                   std::mutex &ready_mutex, int &done_processing) {
