@@ -21,11 +21,6 @@ public:
   int initYSpace = 90;
 
   RoadGrid() = default;
-<<<<<<< HEAD
-};
-
-#endif
-=======
 
   float positionYFromRoad(int n) const { return n * spacing + initXSpace; }
 
@@ -99,4 +94,3 @@ extern RoadGrid roadManager;
 #endif
 
 
->>>>>>> main
