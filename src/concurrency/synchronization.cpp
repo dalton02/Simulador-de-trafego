@@ -20,6 +20,8 @@ Synchronization::Synchronization() {
 
 void Synchronization::mainLoop() {
 
+  initObjects();
+
   std::mutex clockMutex;
   std::condition_variable clockCondition;
 
@@ -27,16 +29,6 @@ void Synchronization::mainLoop() {
   int workersProcessed = 0;
 
   const auto tick_duration = std::chrono::milliseconds(40);
-
-  Object *light1 = new Object{25, 0, 5, 10};
-
-  Object *car1 = new Object{6, 0, 10, 10};
-  Object *car2 = new Object{35, 0, 10, 10};
-
-  TrafficLight &trafficLight1 = globalLights.emplace_back(light1, 4);
-
-  globalCars.emplace_back(car1, 2, 0, &trafficLight1);
-  //  globalCars.emplace_back(car2, 2, &trafficLight1);
 
   for (const auto &car : globalCars) {
     car->thr =
@@ -89,4 +81,70 @@ void Synchronization::mainLoop() {
 
     std::this_thread::sleep_for(tick_duration);
   }
+}
+
+// Area de inicialização e testes
+void Synchronization::initObjects() {
+  load();
+
+  roadManager.generateIntersections();
+
+  std::vector<Object> &crossings = roadManager.objects;
+  int lightSize = 20;
+
+  int sync = 80;
+
+  int count = 0;
+
+  for (Object &cross : crossings) {
+    int centerX = cross.x + lightSize / 4;
+    int centerY = cross.y + lightSize / 4;
+
+    Object lightObj = Object{centerX, centerY, lightSize, lightSize};
+
+    globalLights.emplace_back(lightObj, 0, sync, sync - 1);
+    globalLights.emplace_back(lightObj, 1, sync, 0);
+
+    globalLights[count].closest = count + 1;
+    globalLights[count + 1].closest = count;
+
+    count += 2;
+  }
+
+  std::vector<Object> carsX;
+  carsX = concat(carsX, roadManager.genObjectsFromRoad(0, 0, 1, 120, 40, 40));
+  carsX = concat(carsX, roadManager.genObjectsFromRoad(0, 1, 3, 120, 40, 40));
+  carsX = concat(carsX, roadManager.genObjectsFromRoad(0, 2, 2, 120, 40, 40));
+
+  std::vector<Object> carsY;
+  carsY = concat(carsY, roadManager.genObjectsFromRoad(1, 0, 2, 140, 40, 40));
+  carsY = concat(carsY, roadManager.genObjectsFromRoad(1, 1, 2, 140, 40, 40));
+  carsY = concat(carsY, roadManager.genObjectsFromRoad(1, 2, 2, 130, 40, 40));
+
+  count = 0;
+  int speed = 1;
+
+  int values[] = {1, 2, 4};
+
+  for (Object c : carsX) {
+
+    int isAmbulance = false;
+
+    if (count == 4) {
+      isAmbulance = true;
+    }
+
+    speed = values[rand() % 3];
+
+    globalCars.push_back(std::make_unique<Car>(c, speed, 0, isAmbulance));
+    count++;
+  }
+  for (Object c : carsY) {
+
+    speed = values[rand() % 3];
+
+    globalCars.push_back(std::make_unique<Car>(c, 0, speed, false));
+  }
+
+  std::cout << "Inicializados " << globalCars.size() << " carros\n";
 }
