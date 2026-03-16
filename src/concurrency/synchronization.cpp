@@ -51,12 +51,38 @@ void Synchronization::mainLoop() {
 
   while (true) {
 
+    draw();
+
     for (const auto &car : globalCars) {
-      car.canProcess = true;
+      car->canProcess = true;
     }
 
     for (TrafficLight &traffic : globalLights) {
-      traffic.process(clockMutex, clockCondition);
+      traffic.keepClosed = false;
+    }
+
+    for (TrafficLight &traffic : globalLights) {
+
+      bool hasAmbulance = false;
+
+      for (const auto &car : globalCars) {
+        // ignora carrito que não pertence ao semaforo ou ja passou da tela
+        if (car->currentTrafficLight != &traffic || !car->active) {
+          continue;
+        }
+
+        // pegamos o semaforo vertical ou horizontal do nosos cruzamento
+        TrafficLight &closest = globalLights[traffic.closest];
+
+        // se o carro é ambulancia, mantem o sinal proximo fechado, e o nosso
+        // aberto
+        if (car->isAmbulance) {
+          hasAmbulance = true;
+          closest.keepClosed = true;
+        }
+      }
+
+      traffic.process(clockMutex, clockCondition, hasAmbulance);
     }
 
     clockCondition.notify_all();
