@@ -34,13 +34,13 @@ public:
     if (pos == 0) {
       int startY = from * spacing + initYSpace;
       for (int i = 0; i < _qtd; i++) {
-        Object obj = Object(i * _spacing, startY, width, height);
+        Object obj = Object(i * -_spacing, startY, width, height);
         objs.push_back(obj);
       }
     } else {
       int startX = from * spacing + initXSpace;
       for (int i = 0; i < _qtd; i++) {
-        Object obj = Object(startX, i * _spacing, width, height);
+        Object obj = Object(startX, i * -_spacing, width, height);
         objs.push_back(obj);
       }
     }

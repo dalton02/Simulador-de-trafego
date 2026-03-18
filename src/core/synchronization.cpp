@@ -112,14 +112,15 @@ void Synchronization::initObjects() {
   }
 
   std::vector<Object> carsX;
-  carsX = concat(carsX, roadManager.genObjectsFromRoad(0, 0, 1, 120, 40, 40));
+  carsX = concat(carsX, roadManager.genObjectsFromRoad(0, 0, 2, 120, 40, 40));
   carsX = concat(carsX, roadManager.genObjectsFromRoad(0, 1, 3, 120, 40, 40));
   carsX = concat(carsX, roadManager.genObjectsFromRoad(0, 2, 2, 120, 40, 40));
 
   std::vector<Object> carsY;
-  carsY = concat(carsY, roadManager.genObjectsFromRoad(1, 0, 2, 140, 40, 40));
+  carsY = concat(carsY, roadManager.genObjectsFromRoad(1, 0, 2, 240, 40, 40));
   carsY = concat(carsY, roadManager.genObjectsFromRoad(1, 1, 2, 140, 40, 40));
-  carsY = concat(carsY, roadManager.genObjectsFromRoad(1, 2, 2, 130, 40, 40));
+  carsY = concat(carsY, roadManager.genObjectsFromRoad(1, 2, 3, 130, 40, 40));
+  carsY = concat(carsY, roadManager.genObjectsFromRoad(1, 3, 2, 130, 40, 40));
 
   count = 0;
   int speed = 1;
