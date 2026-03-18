@@ -1,4 +1,5 @@
 #include "../../include/utils/utils.hpp"
+#include <cmath>
 #include <iostream>
 #include <sstream>
 
@@ -15,22 +16,6 @@ bool isColliding(Object obj1, Object obj2) {
   return true;
 }
 
-bool isCloseToBy(int x, int y, Object obj1, Object obj2) {
-  int center1_x = obj1.x + obj1.width / 2;
-  int center1_y = obj1.y + obj1.height / 2;
-
-  int center2_x = obj2.x + obj2.width / 2;
-  int center2_y = obj2.y + obj2.height / 2;
-
-  int diff_x = center1_x - center2_x;
-  int diff_y = center1_y - center2_y;
-
-  bool close_x = (diff_x >= -x && diff_x <= x);
-  bool close_y = (diff_y >= -y && diff_y <= y);
-
-  return close_x && close_y;
-}
-
 Object createCollisionObj(Object reference, int afterX, int afterY, int width,
                           int height) {
 
@@ -38,6 +23,17 @@ Object createCollisionObj(Object reference, int afterX, int afterY, int width,
   toReturn.x += afterX;
   toReturn.y += afterY;
   return toReturn;
+}
+
+std::vector<Object> concat(std::vector<Object> v1, std::vector<Object> v2) {
+  v1.insert(v1.end(), v2.begin(), v2.end());
+  return v1;
+}
+Direction calculateDistance(Object p1, Object p2) {
+  double dx = p2.x - p1.x;
+  double dy = p2.y - p1.y;
+
+  return {dx, dy, std::sqrt(dx * dx + dy * dy)};
 }
 
 void printObject(Object obj) {

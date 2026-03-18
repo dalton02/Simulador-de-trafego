@@ -1,6 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <vector>
 typedef struct {
   int x;
   int y;
@@ -8,14 +9,21 @@ typedef struct {
   int height;
 } Object;
 
-bool isColliding(Object obj1, Object obj2);
+struct Direction {
+  double dx;
+  double dy;
+  double distance;
+};
 
-/// Retorna se um objeto está proximo do outro  por x metros ou y metros
-bool isCloseToBy(int x, int y, Object obj1, Object obj2);
+bool isColliding(Object obj1, Object obj2);
 
 Object createCollisionObj(Object reference, int afterX, int afterY, int width,
                           int height);
 
 void printObject(Object obj);
+
+Direction calculateDistance(Object p1, Object p2);
+
+std::vector<Object> concat(std::vector<Object> v1, std::vector<Object> v2);
 
 #endif

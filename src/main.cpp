@@ -1,7 +1,4 @@
-#include "../include/concurrency/synchronization.hpp"
-
-#include <cstdio>
-#include <iostream>
+#include "../include/core/synchronization.hpp"
 
 int main() {
   Synchronization *sync = new Synchronization();
