@@ -16,13 +16,16 @@ private:
 
 public:
   bool green;
-  Object *obj;
+  int direction;
+  bool keepClosed;
+  int closest;
+  Object obj;
   std::condition_variable cv;
   std::mutex mu;
-  TrafficLight(Object *obj, int ticksForToggle);
+  TrafficLight(Object obj, int direction, int ticksForToggle, int startWith);
   ~TrafficLight();
 
-  void process(std::mutex &, std::condition_variable &);
+  void process(std::mutex &, std::condition_variable &, bool);
 };
 
 extern std::deque<TrafficLight> globalLights;

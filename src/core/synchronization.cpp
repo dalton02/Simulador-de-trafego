@@ -4,14 +4,13 @@
 #include "../../include/ui/graphics.hpp"
 
 #include <SFML/Graphics.hpp>
+
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Window/VideoMode.hpp>
-
 #include <cstddef>
 #include <iostream>
 #include <memory>
 #include <vector>
-
 using namespace std;
 
 Synchronization::Synchronization() {
@@ -28,7 +27,7 @@ void Synchronization::mainLoop() {
   int ticks = 0;
   int workersProcessed = 0;
 
-  const auto tick_duration = std::chrono::milliseconds(40);
+  const auto tick_duration = std::chrono::milliseconds(5);
 
   for (const auto &car : globalCars) {
     car->thr =
@@ -38,7 +37,8 @@ void Synchronization::mainLoop() {
   }
 
   for (const auto &car : globalCars) {
-    car.thr.detach();
+
+    car->thr.detach();
   }
 
   while (true) {

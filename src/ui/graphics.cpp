@@ -83,12 +83,14 @@ void drawCars() {
     float carW = car->car.width;
 
     if (showCollision) {
+      // ponto de origem do carro
       sf::RectangleShape origin({carW, carH});
       origin.setPosition({pixelX, pixelY});
       origin.setFillColor(sf::Color(255, 255, 255, 255));
       window.draw(origin);
     }
 
+    // sprite
     sf::Sprite sprite(textureCar2);
 
     int speed = car->speedX;
@@ -167,6 +169,8 @@ void drawLights() {
     rect.setPosition({pixelX, pixelY});
 
     window.draw(rect);
+
+    // colisão
 
     if (!showCollision) {
       continue;

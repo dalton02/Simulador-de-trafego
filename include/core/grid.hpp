@@ -49,7 +49,8 @@ public:
   }
 
   void generateIntersections() {
-      for (int i = 0; i < qtd; i++) {
+
+    for (int i = 0; i < qtd; i++) {
       int linha = i / limit;
       int coluna = i % limit;
 
@@ -63,10 +64,9 @@ public:
 
   std::vector<Object> getRoads() {
 
-
     std::vector<Object> objs;
 
-      int totalRoadsY = limit;
+    int totalRoadsY = limit;
     int totalRoadsX = qtd / limit;
 
     for (int i = 0; i < totalRoadsY; i++) {
@@ -83,14 +83,9 @@ public:
       objs.push_back(obj);
     }
     return objs;
-    
   }
-
-
 };
 
 extern RoadGrid roadManager;
 
 #endif
-
-

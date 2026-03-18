@@ -49,6 +49,4 @@ void TrafficLight ::process(mutex &mu, condition_variable &cv, bool ambulance) {
   }
 }
 
-void TrafficLight ::toggle() { 
-  green = !green; 
-}
+void TrafficLight ::toggle() { green = !green; }
