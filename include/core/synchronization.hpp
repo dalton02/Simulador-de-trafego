@@ -2,6 +2,7 @@
 #define SYNCHRONIZATION_HPP
 
 #include <vector>
+#define CLOCK 30
 
 class Synchronization {
 public:

@@ -7,10 +7,10 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Window/VideoMode.hpp>
-#include <cstddef>
 #include <iostream>
 #include <memory>
 #include <vector>
+
 using namespace std;
 
 Synchronization::Synchronization() {
@@ -27,7 +27,7 @@ void Synchronization::mainLoop() {
   int ticks = 0;
   int workersProcessed = 0;
 
-  const auto tick_duration = std::chrono::milliseconds(5);
+  const auto tick_duration = std::chrono::milliseconds(CLOCK);
 
   for (const auto &car : globalCars) {
     car->thr =
@@ -63,7 +63,7 @@ void Synchronization::mainLoop() {
           continue;
         }
 
-        // pegamos o semaforo vertical ou horizontal do nosos cruzamento
+        // pegamos o semaforo vertical ou horizontal do nosso cruzamento
         TrafficLight &closest = globalLights[traffic.closest];
 
         // se o carro é ambulancia, mantem o sinal proximo fechado, e o nosso
@@ -130,7 +130,7 @@ void Synchronization::initObjects() {
 
     int isAmbulance = false;
 
-    if (count == 4) {
+    if (count == 3) {
       isAmbulance = true;
     }
 

@@ -37,6 +37,9 @@ void TrafficLight ::process(mutex &mu, condition_variable &cv, bool ambulance) {
   }
 
   int compensation = 0;
+
+  // simulando compensação para dar um tempinho antes do semaforo vizinho ficar
+  // verde.
   if (!green) {
     compensation = 10;
   }

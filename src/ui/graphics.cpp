@@ -28,8 +28,6 @@ void load() {
   ignore = textureAmbulance.loadFromFile("assets/ambulance.png");
 }
 
-bool showCollision = false;
-
 void drawRoads() {
   for (Object obj : roadManager.getRoads()) {
 
@@ -82,7 +80,7 @@ void drawCars() {
 
     float carW = car->car.width;
 
-    if (showCollision) {
+    if (SHOW_COLLISION) {
       // ponto de origem do carro
       sf::RectangleShape origin({carW, carH});
       origin.setPosition({pixelX, pixelY});
@@ -115,7 +113,7 @@ void drawCars() {
     }
     window.draw(sprite);
 
-    if (!showCollision) {
+    if (!SHOW_COLLISION) {
       continue;
     }
 
@@ -172,7 +170,7 @@ void drawLights() {
 
     // colisão
 
-    if (!showCollision) {
+    if (!SHOW_COLLISION) {
       continue;
     }
     sf::RectangleShape rec2({light.obj.width * 1.0f, light.obj.height * 1.0f});
