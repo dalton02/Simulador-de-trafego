@@ -2,6 +2,7 @@
 #include "../../include/core/car.hpp"
 #include "../../include/core/grid.hpp"
 #include "../../include/core/traffic_light.hpp"
+#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -19,6 +20,8 @@ sf::Texture textureRed;
 sf::Texture textureAmbulance;
 sf::Texture textureGreen;
 
+sf::Music music;
+
 void load() {
   bool ignore = textureCar.loadFromFile("assets/car.png");
   ignore = textureCar2.loadFromFile("assets/car2.png");
@@ -26,6 +29,10 @@ void load() {
   ignore = textureGreen.loadFromFile("assets/green.png");
   ignore = textureRed.loadFromFile("assets/red.png");
   ignore = textureAmbulance.loadFromFile("assets/ambulance.png");
+
+  ignore = music.openFromFile("assets/som.mpeg");
+
+  music.play();
 }
 
 void drawRoads() {
