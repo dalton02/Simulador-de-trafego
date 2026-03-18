@@ -54,7 +54,7 @@ sudo apt-get install g++ libsfml-dev
 
 ### Pelo terminal:
 
-`g++ -std=c++20 $(find . -type f -name '\*.cpp') -lsfml-system -lsfml-window -lsfml-graphics -o simulador && ./simulador`
+`g++ -std=c++20 $(find . -type f -name '*.cpp') -lsfml-system -lsfml-window -lsfml-graphics -o simulador && ./simulador`
 
 ### Pelo Code Blocks
 
