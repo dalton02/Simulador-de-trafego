@@ -68,7 +68,7 @@ Car ::Car(Object obj, int speedX, int speedY, bool isAmbulance) {
 };
 
 void Car::standby(std::condition_variable &ready_variable,
-                  std::mutex &ready_mutex, int &done_processing) {
+                  std::mutex &ready_mutex) {
 
   while (true) {
 

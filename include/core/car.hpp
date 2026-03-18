@@ -31,7 +31,7 @@ public:
   void calculateCollisor();
   void waitGreenLight();
   void run();
-  void standby(std::condition_variable &, std::mutex &, int &);
+  void standby(std::condition_variable &, std::mutex &);
   void moveToTrafficLight(TrafficLight *);
   bool inFrontOfRedLight();
   bool hasCarInFront();

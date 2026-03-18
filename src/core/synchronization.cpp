@@ -25,19 +25,15 @@ void Synchronization::mainLoop() {
   std::condition_variable clockCondition;
 
   int ticks = 0;
-  int workersProcessed = 0;
-
   const auto tick_duration = std::chrono::milliseconds(CLOCK);
 
   for (const auto &car : globalCars) {
-    car->thr =
-        std::thread([&car, &clockCondition, &clockMutex, &workersProcessed]() {
-          car->standby(clockCondition, clockMutex, workersProcessed);
-        });
+    car->thr = std::thread([&car, &clockCondition, &clockMutex]() {
+      car->standby(clockCondition, clockMutex);
+    });
   }
 
   for (const auto &car : globalCars) {
-
     car->thr.detach();
   }
 
